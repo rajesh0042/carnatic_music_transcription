@@ -97,5 +97,6 @@ RAGA_MAP = {
 
 TAALAM_MAP = {
 	"rupakam": "6/4",
-	"eka_thisra": "5/4"
+	"eka_thisra": "3/4",
+	"adi": "4/4",
 }

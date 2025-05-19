@@ -1,3 +1,17 @@
-{"title": "Syamale Meenakshi", "taalam": "Eka", "ragam": "SANKARABHARANAM"}
+{"title": "Syamale Meenakshi", "taalam": "adi", "ragam": "SANKARABHARANAM"}
 
-S. R G. M. P... P.;
+S.. R G. M. P.; P.;
+
+D.. N S. S N D. P. M. G.
+
+M. D. M. R. G. P. G. S.
+
+R. M. R. N. S.; S.;
+
+P.; P. P. M; M. M.
+
+G.; G. G. R.; R. R.
+
+P.; P. D P M.; M. P M
+
+G.; G. M G R.; R. G R

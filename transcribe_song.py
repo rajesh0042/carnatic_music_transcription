@@ -6,14 +6,18 @@ import json
 def translate_string(parts, raag):
 	gen = []
 	for p in parts:
-		if p.endswith('.'):
-			count = 2
-		elif p.endswith('.;'):
-			count = 1
+		if p.endswith('..'):
+			note=raag[p.replace('.', '')]
+			gen.append(f"{note}2~ {note}4")
 		else:
-			count = 4
+			if p.endswith('.;'):
+				count = 1
+			elif p.endswith('.'):
+				count = 2	
+			else:
+				count = 4
 
-		gen.append(raag[p.replace('.', '').replace(';', '')] + str(count))
+			gen.append(raag[p.replace('.', '').replace(';', '')] + str(count))
 
 	return ' '.join(gen)
 
