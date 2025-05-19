@@ -1,0 +1,14 @@
+{"title": "Vara Veena", "taalam": "Rupakam", "ragam": "Mohanam"}
+
+G G P. P. D P Ṡ. Ṡ.
+Ṙ Ṡ D D P. D P G G R.
+G P D Ṡ D. D P G G R.
+G G D P G. P G G R S.
+
+G G G G R G P G P. P.
+G G D P D. D P Ṡ. Ṡ.
+D Ġ Ṙ Ṙ Ṡ Ṡ D Ṡ D D D P
+G P D Ṡ D P D P G G R S
+
+S R G. G. G R P G R.
+S R S G R S R R S Ḍ S.
