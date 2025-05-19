@@ -8,10 +8,12 @@ def translate_string(parts, raag):
 	for p in parts:
 		if p.endswith('.'):
 			count = 2
+		elif p.endswith('.;'):
+			count = 1
 		else:
 			count = 4
 
-		gen.append(raag[p.replace('.', '')] + str(count))
+		gen.append(raag[p.replace('.', '').replace(';', '')] + str(count))
 
 	return ' '.join(gen)
 
@@ -50,6 +52,7 @@ def main(args):
 	raag = raga_map.RAGA_MAP[header['ragam'].lower()]
 	print(raag)
 	timesignature = raga_map.TAALAM_MAP[header['taalam'].lower()]
+	print(timesignature)
 
 	for line in file:
 		if (len(line) < 10):

@@ -38,6 +38,32 @@ MOHAN_NOTE_MAP = {
 	"Ṗ": "g''",
 }
 
+# Sankarabharanam: https://en.wikipedia.org/wiki/Sankarabharanam_(raga)
+# ārohaṇa : 
+# S R₂ G₃ M₁ P D₂ N₃ Ṡ
+# C D E F G A B C
+# avarohaṇa : 
+# Ṡ N₃ D₂ P M₁ G₃ R₂ S
+# C B A G F E D C
+SANKARABHARANAM_NOTE_MAP = {
+	"Pl": "g",
+	"Ḍ": "a",
+	"Ṇ": "b",
+	"S": "c'",
+	"R": "d'",
+	"G": "e'",
+	"M": "f'",
+	"P": "g'",
+	"D": "a'",
+	"N": "b'",
+	"Ṡ": "c''", 
+	"Ṙ": "d''",
+	"Ġ": "e''",
+	"Ṁ": "f''",
+	"Ṗ": "g''",
+}
+
+
 # MALAHARI: https://en.wikipedia.org/wiki/Malahari
 # ārohaṇa: 
 # S R₁ M₁ P D₁ Ṡ
@@ -66,8 +92,10 @@ MALAHARI_NOTE_MAP = {
 RAGA_MAP = {
 	"mohanam": MOHAN_NOTE_MAP,
 	"malahari": MALAHARI_NOTE_MAP,
+	"sankarabharanam": SANKARABHARANAM_NOTE_MAP,
 }
 
 TAALAM_MAP = {
-	"rupakam": "6/4"
+	"rupakam": "6/4",
+	"eka_thisra": "5/4"
 }
