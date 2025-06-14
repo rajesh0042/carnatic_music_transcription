@@ -63,7 +63,7 @@ def main(args):
 			continue
 		if (line.startswith("{")):
 			continue
-		stanza = make_stanza(line.rstrip().split(" "), raag, timesignature)
+		stanza = make_stanza([l.upper() for l in line.rstrip().split(" ")], raag, timesignature)
 		outfile.write(stanza)
 	
 	outfile.close()
