@@ -3,16 +3,16 @@
 
 P P G P M R M G M P D N
 
-S P D P M G R G R R.;
+Ṡ P D P M G R G R R..
 
 P P G P M R M G M P D N
 
-S P D P M G R G S S.;
+Ṡ P D P M G R G S S..
 
 G G S G G S M M R M M R
 
-M P D P M G R G R R.;
+M P D P M G R G R R..
 
 G G S G G S M M R M M R
 
-M P D P M G R G S S.;
+M P D P M G R G S S..
