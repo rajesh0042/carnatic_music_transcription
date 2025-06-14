@@ -1,0 +1,13 @@
+{"title": "Kamalasana", "taalam": "adi", "ragam": "SANKARABHARANAM"}
+
+p m g. g m r. r g s. s. s.
+r g m. m p g. g m r. r. r.
+p m g. g m r. r g s. s. s. 
+r g m g r s Ṇ s r g s. s. s.
+p m g. Ṡ n d. d p p m g m r. 
+p m g. Ṡ n d p m g r. r. r. 
+p m g p m g r m g r s. s. s. 
+g m p. p. p. Ṡ. p. p. p.
+Ṡ. p. p. d p m g m r. r.
+g m p. p. p. Ṡ. p. p. p. 
+Ṡ. p. g m p m g r g r s Ṇ s.
