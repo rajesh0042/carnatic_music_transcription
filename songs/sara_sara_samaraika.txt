@@ -1,0 +1,33 @@
+{"title": "Sara Sara Samaraika", "taalam": "adi", "ragam": "Kuntalavarali"}
+
+{Pallavi}
+s m s m p n d. s'.; s'.;
+s m s m p n d. s'. n. d. p.
+s m s m p n d. (s' n n d d p p m) m. m.
+s m p d n d (p d d p) m.; m.; 
+s m s m p n d. (s' n n d d p p m) m. m.
+s m p d n d (p d d p) m.; m.; 
+s m s m p n d. s'.; s'.;
+
+{Anu Pallavi}
+M N D S' N D S'. M'.S'. S'ND.
+M'M'M'M' S'S'S'S' M'.S'. (S'NDP) M.
+M N D S' N D S'. M'.S'. S'ND.
+M'M'M'M' S'S'S'S' M'.S'. (S'NDP) M.
+
+s m s m p n d. (s' n n d d p p m) m. m.
+s m p d n d (p d d p) m.; m.; 
+s m s m p n d. s'.; s'.;
+
+{Charanam}
+D D D . D. N D N D N P D. P* M.
+P P P . D D D. N D N P S'.;
+D D D . D. N D N D N P D. P* M.
+P P P . D D D. N D NP S'.;
+
+M N D S' N D S'. M'. S'. S'N D.
+M' M' M' M' S' S' S' S' M'. S'. (S' N D P) M.
+
+s m s m p n d. (s' n n d d p p m) m. m.
+s m p d n d (p d d p) m.; m.; 
+s m s m p n d. s'.; s'.;
