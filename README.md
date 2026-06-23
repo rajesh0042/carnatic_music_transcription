@@ -50,6 +50,14 @@ tala) plus `site/pdfs/<song>.pdf`. Open `site/index.html` in a browser, or host
 the self-contained `site/` folder on any static host (e.g. GitHub Pages). The
 `site/` folder is generated and git-ignored.
 
+Pre-rendered PDFs of every song are also committed under [`pdfs/`](pdfs/) for
+quick browsing on GitHub. Regenerate them with:
+
+```bash
+for f in songs/*.txt; do n=$(basename "$f" .txt); \
+  python3 transcribe_song.py "$f" /tmp/"$n".ly && lilypond -o pdfs/"$n" /tmp/"$n".ly; done
+```
+
 ## Song File Format
 
 Each song is a plain `.txt` file with two parts:
