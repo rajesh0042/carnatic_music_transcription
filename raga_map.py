@@ -78,6 +78,7 @@ RAGA_DEFINITIONS = {
     "sriranjani":  ["R2", "G2", "M1", "D2", "N2"],       # janya of 22 (no Pa)
     "malahari":    ["R1", "G3", "M1", "P", "D1"],        # janya of 15 (no Ni)
     "kuntalavarali": ["M1", "P", "D2", "N2"],            # janya of 28 (S M P D N; no Ri/Ga)
+    "suposhini":   ["R2", "M1", "P", "D2", "N2"],        # janya of 28, vakra (no Ga)
 }
 
 
@@ -106,10 +107,13 @@ def get_raga(name):
     return variants_to_map(raga_source.get(name))
 
 
-# Taala -> Western time signature.
+# Taala -> Western time signature. A few common transliteration spellings map
+# to the same value (rupakam / roopakam, thisra / tisra).
 TAALAM_MAP = {
     "rupakam": "6/4",
+    "roopakam": "6/4",
     "eka_thisra": "3/4",
+    "eka_tisra": "3/4",
     "adi": "4/4",
     "misra_chapu": "7/8",
     "khanda_chapu": "5/8",
