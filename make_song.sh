@@ -9,4 +9,8 @@ python ./transcribe_song.py "$1" ./gen/"$song".ly
 pushd ./gen
 lilypond "$song".ly
 popd 
-open ./gen/"$song".pdf
+if command -v open &>/dev/null; then
+	open ./gen/"$song".pdf
+elif command -v xdg-open &>/dev/null; then
+	xdg-open ./gen/"$song".pdf
+fi

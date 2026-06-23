@@ -45,13 +45,14 @@ def main(args):
 	outfile = open(args[1], 'w')
 	header = json.loads(file.readline())
 	
-	outfile.write("""
+	outfile.write(r"""
+\version "2.24.4"
 \header {
   title = "%s"
   subtitle = "Raagam: %s"
   subsubtitle = "Taalam: %s"
-}\n
- 	""" % (header['title'], header['ragam'], header['taalam']))
+}
+""" % (header['title'], header['ragam'], header['taalam']))
 	
 	raag = raga_map.RAGA_MAP[header['ragam'].lower()]
 	print(raag)
