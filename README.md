@@ -98,37 +98,49 @@ This is: half-Sa, half-Ga, half-Sa, half-Ga, half-Sa, half-Ga, quarter-Ma, quart
 
 ## Ragas
 
-### Mohanam
-Pentatonic (5-note) scale — no Ma or Ni.
+A raga is a scale: it fixes which of the 12 semitones each svara maps to.
+Internally (`raga_map.py`) a raga is defined by **which variant** of each svara
+it uses — `R1/R2/R3`, `G1/G2/G3`, `M1/M2`, `D1/D2/D3`, `N1/N2/N3` — where the
+number is the semitone position (see [Code Structure](#code-structure)).
 
-```
-ārohaṇa:   S  R₂  G₃  P  D₂  Ṡ
-Western:    C  D   E   G  A   C
-```
+### Built-in ragas
 
-### Sankarabharanam
-Equivalent to the Western major scale (Ionian mode).
+**Melakarta (parent) ragas:**
 
-```
-ārohaṇa:   S  R₂  G₃  M₁  P  D₂  N₃  Ṡ
-Western:    C  D   E   F   G  A   B   C
-```
+| Raga              | Svaras                 | Western analogy        |
+|-------------------|------------------------|------------------------|
+| `mayamalavagowla` | R1 G3 M1 P D1 N3       | Double harmonic / Bhairav |
+| `sankarabharanam` | R2 G3 M1 P D2 N3       | Major scale (Ionian)   |
+| `kharaharapriya`  | R2 G2 M1 P D2 N2       | Dorian                 |
+| `harikambhoji`    | R2 G3 M1 P D2 N2       | Mixolydian             |
+| `kalyani`         | R2 G3 **M2** P D2 N3   | Lydian (sharp 4)       |
+| `todi`            | R1 G2 M1 P D1 N2       | Phrygian ♮3-ish        |
+| `natabhairavi`    | R2 G2 M1 P D1 N2       | Natural minor (Aeolian)|
+| `charukesi`       | R2 G3 M1 P D1 N2       | —                      |
+| `vachaspati`      | R2 G3 **M2** P D2 N2   | Lydian dominant        |
 
-### Malahari
-Pentatonic-ish scale with flat second and flat sixth.
+**Janya (derived) ragas** — subsets that omit some svaras:
 
-```
-ārohaṇa:   S  R₁  M₁  P  D₁  Ṡ
-Western:    C  D♭  F   G  A♭  C
-```
+| Raga          | Svaras            | Notes                        |
+|---------------|-------------------|------------------------------|
+| `mohanam`     | R2 G3 P D2        | pentatonic (no Ma, Ni)       |
+| `hamsadhwani` | R2 G3 P N3        | pentatonic (no Ma, Dha)      |
+| `hindolam`    | G2 M1 D1 N2       | pentatonic (no Ri, Pa)       |
+| `abhogi`      | R2 G2 M1 D2       | pentatonic (no Pa, Ni)       |
+| `sriranjani`  | R2 G2 M1 D2 N2    | hexatonic (no Pa)            |
+| `malahari`    | R1 G3 M1 P D1     | hexatonic (no Ni)            |
+
+(Sa is always present and Pa is present unless the svara list omits it.)
 
 ## Taalas (Time Signatures)
 
-| Taala       | Time signature | Beats per cycle |
-|-------------|----------------|-----------------|
-| `adi`       | 4/4            | 8 (2 cycles)    |
-| `rupakam`   | 6/4            | 6               |
-| `eka_thisra`| 3/4            | 3               |
+| Taala         | Time signature |
+|---------------|----------------|
+| `adi`         | 4/4            |
+| `rupakam`     | 6/4            |
+| `eka_thisra`  | 3/4            |
+| `misra_chapu` | 7/8            |
+| `khanda_chapu`| 5/8            |
 
 ## Included Songs
 
@@ -150,29 +162,54 @@ Western:    C  D♭  F   G  A♭  C
 
 ## Adding a New Raga
 
-In `raga_map.py`, add a new dict mapping svara symbols to LilyPond pitch names, then register it in `RAGA_MAP`:
+Add **one line** to `RAGA_DEFINITIONS` in `raga_map.py` listing which variant of
+each svara the raga uses. You never touch pitches or octaves — those are derived.
 
 ```python
-MY_RAGA_NOTE_MAP = {
-    "S": "c'",
-    "R": "des'",   # flat second
-    # ... fill in all svaras used by this raga
-}
-
-RAGA_MAP = {
+RAGA_DEFINITIONS = {
     ...,
-    "my_raga": MY_RAGA_NOTE_MAP,
+    "simhendramadhyamam": ["R2", "G2", "M2", "P", "D1", "N3"],  # mela 57
 }
 ```
 
-LilyPond pitch names: `c d e f g a b` for naturals, `des ees fis` etc. for flats/sharps. Append `'` for middle octave, `''` for upper octave.
+- Use `R1/R2/R3`, `G1/G2/G3`, `M1/M2`, `D1/D2/D3`, `N1/N2/N3` (the number is the
+  variant; see the `SVARA` table for the semitone each maps to).
+- `S` is added automatically; include `P` only if the raga has Panchama.
+- Omit any svara the raga doesn't use (that's how janya/pentatonic ragas work).
+- All three octaves work automatically — no need to list them.
+
+## Adding a New Taala
+
+Add a line to `TAALAM_MAP` in `raga_map.py` mapping the name to a time signature:
+
+```python
+TAALAM_MAP = {
+    ...,
+    "tisra_triputa": "7/4",
+}
+```
 
 ## Code Structure
 
 ```
-transcribe_song.py   # Main script: parses song file, calls raga_map, emits LilyPond
-raga_map.py          # Svara→pitch mappings for each raga; taala→time-signature table
+transcribe_song.py   # CLI: parse song file, split notes/durations, emit LilyPond
+raga_map.py          # Music theory: chromatic grid, svara variants, raga & taala tables
 make_song.sh         # Shell wrapper: runs transcribe_song.py then lilypond, opens PDF
 songs/               # Song input files (svara text notation)
 gen/                 # Generated output (.ly and .pdf) — not committed
 ```
+
+### How `raga_map.py` is layered
+
+The redesign separates three concerns so adding ragas needs no pitch math:
+
+1. **`CHROMATIC`** — the 12 semitones above Sa → LilyPond note name, assuming
+   Sa = C. Defined **once**. Change this single table to retune everything.
+2. **`SVARA`** — named svara variants (`R1`, `G3`, `M2`, …) → semitone offset.
+   Lets a raga be written the way musicians describe it.
+3. **`RAGA_DEFINITIONS`** — each raga lists only its svara variants. A small
+   builder (`_build_raga_map`) expands these into `RAGA_MAP`.
+
+Octaves are handled in `to_lilypond`: the octave is read from the diacritic on
+the svara (dot above = upper, dot below = lower), so every raga works in every
+octave without re-listing notes.
