@@ -55,25 +55,41 @@ Each song is a plain `.txt` file with two parts:
 
 ### 2. Body — svara notation
 
-Each line becomes one stanza in the score. Empty lines and lines under 10 characters are skipped. Lines starting with `{` are also skipped (reserved for section labels).
+Each line becomes one stanza in the score. Empty lines and lines under 10 characters are skipped. A line of the form `{Section Name}` becomes a heading in the score (see [Section labels](#section-labels)).
 
-Svaras are space-separated. The notation is:
+Svaras may be space-separated or written contiguously — `s n d p`, `sndp`, and
+`(sndp)` all parse the same way (spacing never affects rhythm; only `( )` speed
+brackets do). The notation is:
 
 #### Notes (Svaras)
 
 Carnatic music uses 7 svaras per octave, written as single letters. The tool supports three octaves:
 
-| Svara | Name | Western analogy | Lower octave | Middle octave | Upper octave |
-|-------|------|-----------------|--------------|---------------|--------------|
-| Sa    | Shadja      | Do | —   | `S`  | `Ṡ`  |
-| Ri    | Rishabha    | Re | —   | `R`  | `Ṙ`  |
-| Ga    | Gandhara    | Mi | —   | `G`  | `Ġ`  |
-| Ma    | Madhyama    | Fa | `Ṃ` | `M`  | `Ṁ`  |
-| Pa    | Panchama    | Sol| `Pl`| `P`  | `Ṗ`  |
-| Dha   | Dhaivata    | La | `Ḍ` | `D`  | —    |
-| Ni    | Nishada     | Ti | `Ṇ` | `N`  | —    |
+| Svara | Name | Western analogy | Middle octave |
+|-------|------|-----------------|---------------|
+| Sa    | Shadja      | Do | `S` |
+| Ri    | Rishabha    | Re | `R` |
+| Ga    | Gandhara    | Mi | `G` |
+| Ma    | Madhyama    | Fa | `M` |
+| Pa    | Panchama    | Sol| `P` |
+| Dha   | Dhaivata    | La | `D` |
+| Ni    | Nishada     | Ti | `N` |
 
 Notes are case-insensitive (`s` and `S` are the same).
+
+#### Octaves
+
+Mark the octave with a suffix (these stack, e.g. `s''` is two octaves up):
+
+| Octave        | ASCII (preferred) | Diacritic   |
+|---------------|-------------------|-------------|
+| Upper         | `s'`              | `Ṡ Ṙ Ġ Ṁ Ṗ` |
+| Middle        | `s`               | `S R G M P D N` |
+| Lower         | `s,`              | `Ṇ Ḍ Ṃ` (and `Pl` for lower Pa) |
+
+The ASCII form (`'` up, `,` down — borrowed from LilyPond) is easiest to type;
+the dotted form is still accepted, so older songs keep working. The octave
+suffix goes before the duration suffix: `s'.;` = whole-note upper Sa.
 
 #### Durations
 
@@ -87,6 +103,62 @@ Duration is indicated by a suffix on the note:
 | `.;`   | Whole note    | 4 beats        | `c1`     |
 
 Examples: `S` = quarter Sa, `S.` = half Sa, `S..` = dotted half Sa, `S.;` = whole Sa.
+
+A duration mark may also stand on its own to **extend the previous svara**, the
+way a Carnatic `,`/`;` lengthens a note: `S .` means the same as `S.`, and
+`D D D .` is `D D D.` (the third Dha held for two beats).
+
+#### Speed (double tempo / madhyamakāla)
+
+Wrap svaras in parentheses to play them at double tempo — each `(` halves the
+note values for the svaras it encloses, and `)` restores the previous speed.
+Nest `(( ))` for quadruple tempo. Speed composes with the duration suffixes
+above, and you can mix slow and fast within one line:
+
+```
+p d (n s' n d) p.; ((s' n d p)) s.;
+```
+
+| Nesting    | Note value (from a plain svara) | Svaras per beat |
+|------------|----------------------------------|-----------------|
+| none       | quarter (`4`)                    | 1               |
+| `( … )`    | eighth (`8`)                     | 2 (double)      |
+| `(( … ))`  | sixteenth (`16`)                 | 4 (quadruple)   |
+
+This mirrors Carnatic underline-grouping, where notes sharing an underline are
+sped up to fit a beat. A whole double-tempo section can just be one bracketed
+group per line.
+
+#### Gamaka / grace notes
+
+Append `*` to a svara to make it a **grace ("touch") note** — a quick gamaka
+ornament that decorates the next note and takes no beat time of its own. It
+renders as a LilyPond acciaccatura (a small slashed note) and gets no lyric
+syllable:
+
+```
+d. p* m.
+```
+
+is "Dha (held), just touch Pa, Ma (held)" — `a'2 \acciaccatura g'8 f'2`.
+
+#### Section labels
+
+Put a section name in braces on its own line to print a heading in the score —
+use it to mark **Pallavi**, **Anupallavi**, and **Charanam**:
+
+```
+{Pallavi}
+s m s m p n d. s'.; s'.;
+...
+{Anupallavi}
+...
+{Charanam}
+...
+```
+
+The braces line renders as a bold heading above the following stanzas and isn't
+treated as svaras.
 
 ### Example stanza
 

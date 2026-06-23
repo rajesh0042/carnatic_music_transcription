@@ -77,6 +77,7 @@ RAGA_DEFINITIONS = {
     "abhogi":      ["R2", "G2", "M1", "D2"],             # janya of 22
     "sriranjani":  ["R2", "G2", "M1", "D2", "N2"],       # janya of 22 (no Pa)
     "malahari":    ["R1", "G3", "M1", "P", "D1"],        # janya of 15 (no Ni)
+    "kuntalavarali": ["M1", "P", "D2", "N2"],            # janya of 28 (S M P D N; no Ri/Ga)
 }
 
 
@@ -123,8 +124,11 @@ _DOT_BELOW = unicodedata.lookup("COMBINING DOT BELOW")  # lower octave (e.g. Ṇ
 def parse_svara(token):
     """Split a svara token into (base letter, octave offset).
 
-    Octave is read from the diacritic: dot above = +1, dot below = -1,
-    plain = 0. Also accepts the legacy 'Pl' spelling for lower-octave Pa.
+    Octave can be written two ways, which may be combined and stacked:
+      * ASCII (easy to type): trailing "'" raises an octave, "," lowers one
+        (LilyPond-style), e.g. S' = upper Sa, S'' = two up, N, = lower Ni.
+      * Diacritic: combining dot above = +1, dot below = -1 (e.g. Ṡ, Ṇ).
+    Also accepts the legacy 'Pl' spelling for lower-octave Pa.
     """
     if token.upper() == "PL":          # legacy lower-Pa notation
         return "P", -1
@@ -132,10 +136,10 @@ def parse_svara(token):
     octave = 0
     base = []
     for ch in unicodedata.normalize("NFD", token):
-        if ch == _DOT_ABOVE:
-            octave = 1
-        elif ch == _DOT_BELOW:
-            octave = -1
+        if ch == _DOT_ABOVE or ch == "'":
+            octave += 1
+        elif ch == _DOT_BELOW or ch == ",":
+            octave -= 1
         elif unicodedata.combining(ch):
             continue                   # ignore any other combining mark
         else:
