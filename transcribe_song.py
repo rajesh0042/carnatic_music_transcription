@@ -138,7 +138,7 @@ def main(args):
 
 	with open(args[1], 'w') as outfile:
 		outfile.write(r"""
-\version "2.24.4"
+\version "2.24.0"
 \header {
   title = "%s"
   subtitle = "Raagam: %s"
