@@ -37,6 +37,19 @@ To run the Python step alone (e.g. to inspect the LilyPond output):
 python3 transcribe_song.py songs/vande_meenakshi.txt gen/vande_meenakshi.ly
 ```
 
+## Browsing all songs (static site)
+
+To render every song in `songs/` and build a browsable index:
+
+```bash
+uv run python build_site.py
+```
+
+This writes `site/index.html` (a sortable list of all songs with their raga and
+tala) plus `site/pdfs/<song>.pdf`. Open `site/index.html` in a browser, or host
+the self-contained `site/` folder on any static host (e.g. GitHub Pages). The
+`site/` folder is generated and git-ignored.
+
 ## Song File Format
 
 Each song is a plain `.txt` file with two parts:
