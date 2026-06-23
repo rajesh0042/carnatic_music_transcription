@@ -132,6 +132,31 @@ number is the semitone position (see [Code Structure](#code-structure)).
 
 (Sa is always present and Pa is present unless the svara list omits it.)
 
+### Ragas not in the list: auto-fetched from Wikipedia
+
+If a song's `ragam` isn't bundled above, the tool fetches its scale from
+Wikipedia at runtime. Wikipedia encodes Carnatic scales with a
+`{{svaraC|S|R2|G3|...}}` template whose tokens are exactly this project's
+variant notation, so the arohana/avarohana parse directly into a raga.
+
+```json
+{"title": "Test", "taalam": "adi", "ragam": "Simhendramadhyamam"}
+```
+
+just works — it resolves to `R2 G2 M2 P D1 N3`, renders, and is **cached** to
+`raga_cache.json` so later runs are offline and instant.
+
+Notes and limits:
+- **Bundled ragas always win** — they're reviewed and dodge name collisions
+  (Wikipedia's "Todi" is the *Hindustani* raga; the bundled `todi` is Carnatic
+  Hanumatodi). Web lookup runs only for names that are neither bundled nor cached.
+- Resolution is best-effort: it tries `Name`, `Name (raga)`, `Name (ragam)` and
+  requires a Carnatic `svaraC` scale. If only a Hindustani (`svaraH`) or
+  plain-text scale exists, it reports a clear error — add the raga by hand instead.
+- Set `RAGA_OFFLINE=1` to disable all network access (the cache is still used).
+- Network/parse code lives in `raga_source.py` and is imported lazily, so bundled
+  songs never touch the network.
+
 ## Taalas (Time Signatures)
 
 | Taala         | Time signature |
@@ -162,8 +187,13 @@ number is the semitone position (see [Code Structure](#code-structure)).
 
 ## Adding a New Raga
 
-Add **one line** to `RAGA_DEFINITIONS` in `raga_map.py` listing which variant of
-each svara the raga uses. You never touch pitches or octaves — those are derived.
+First try just naming it in a song header — if it's on Wikipedia as a Carnatic
+raga, it's [fetched automatically](#ragas-not-in-the-list-auto-fetched-from-wikipedia).
+
+To bundle it permanently (recommended for ragas you use often, or to override a
+bad/ambiguous Wikipedia entry), add **one line** to `RAGA_DEFINITIONS` in
+`raga_map.py` listing which variant of each svara the raga uses. You never touch
+pitches or octaves — those are derived.
 
 ```python
 RAGA_DEFINITIONS = {

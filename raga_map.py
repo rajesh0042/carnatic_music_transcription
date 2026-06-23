@@ -80,20 +80,29 @@ RAGA_DEFINITIONS = {
 }
 
 
-def _build_raga_map():
-    """Expand each raga's variant list into {base svara letter -> semitone}."""
-    out = {}
-    for name, variants in RAGA_DEFINITIONS.items():
-        notes = {"S": SVARA["S"]}  # Sa is always present
-        for v in variants:
-            base = v[0]            # "R2" -> "R", "P" -> "P"
-            notes[base] = SVARA[v]
-        out[name] = notes
-    return out
+def variants_to_map(variants):
+    """Expand a raga's variant list (['R2','G3',...]) into {base -> semitone}."""
+    notes = {"S": SVARA["S"]}      # Sa is always present
+    for v in variants:
+        notes[v[0]] = SVARA[v]     # "R2" -> base "R", "P" -> base "P"
+    return notes
 
 
 # raga name -> {base svara letter (S R G M P D N) -> semitone above Sa}
-RAGA_MAP = _build_raga_map()
+RAGA_MAP = {name: variants_to_map(v) for name, v in RAGA_DEFINITIONS.items()}
+
+
+def get_raga(name):
+    """Resolve a raga name to its {base svara -> semitone} map.
+
+    Lookup order: bundled RAGA_DEFINITIONS, then the local cache / Wikipedia
+    (see raga_source). Raises LookupError if the name can't be resolved.
+    """
+    key = name.strip().lower()
+    if key in RAGA_MAP:
+        return RAGA_MAP[key]
+    import raga_source                     # imported lazily: no web code unless needed
+    return variants_to_map(raga_source.get(name))
 
 
 # Taala -> Western time signature.

@@ -39,21 +39,32 @@ def make_stanza(notes, raag, timesignature):
 
 
 
-def lookup(table, key, kind):
-	"""Look up a raga/taala case-insensitively with a helpful error."""
+def lookup_taalam(name):
 	try:
-		return table[key.lower()]
+		return raga_map.TAALAM_MAP[name.lower()]
 	except KeyError:
 		raise SystemExit(
-			f"unknown {kind} '{key}'. Available: {', '.join(sorted(table))}"
+			f"unknown taalam '{name}'. Available: "
+			f"{', '.join(sorted(raga_map.TAALAM_MAP))}"
+		)
+
+
+def lookup_ragam(name):
+	# Bundled ragas first, then the local cache / Wikipedia (see raga_source).
+	try:
+		return raga_map.get_raga(name)
+	except LookupError as exc:
+		raise SystemExit(
+			f"unknown ragam '{name}': {exc}\nBundled ragas: "
+			f"{', '.join(sorted(raga_map.RAGA_MAP))}"
 		)
 
 
 def main(args):
 	with open(args[0], 'r') as file:
 		header = json.loads(file.readline())
-		raag = lookup(raga_map.RAGA_MAP, header['ragam'], "ragam")
-		timesignature = lookup(raga_map.TAALAM_MAP, header['taalam'], "taalam")
+		raag = lookup_ragam(header['ragam'])
+		timesignature = lookup_taalam(header['taalam'])
 		lines = file.readlines()
 
 	with open(args[1], 'w') as outfile:
