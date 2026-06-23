@@ -38,11 +38,13 @@ def render(txt_path):
 	name = txt_path.stem
 	ly_path = LYDIR / f"{name}.ly"
 	transcribe_song.main([str(txt_path), str(ly_path)])
-	subprocess.run(
+	proc = subprocess.run(
 		["lilypond", "--loglevel=ERROR", "-o", str(PDFS / name), str(ly_path)],
-		check=True, cwd=LYDIR,
-		stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+		cwd=LYDIR, capture_output=True, text=True,
 	)
+	if proc.returncode != 0:
+		detail = (proc.stderr or proc.stdout).strip()
+		raise RuntimeError(f"lilypond exit {proc.returncode}: {detail[-500:]}")
 	return f"{name}.pdf"
 
 
