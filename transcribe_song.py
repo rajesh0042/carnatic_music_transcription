@@ -92,7 +92,7 @@ def make_stanza(line, raag, timesignature):
 	units = tokenize(line)
 	notes = [u for u in units if u not in "()"]
 	comment = " ".join(notes)                              # show every svara
-	lyrics = " ".join(u for u in notes if '*' not in u)    # grace notes get no syllable
+	lyrics = " ".join(raga_map.to_display_svara(u) for u in notes if '*' not in u)    # grace notes get no syllable
 	translated = translate_units(units, raag)
 	output = """
 %%%% %s

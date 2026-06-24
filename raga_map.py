@@ -151,6 +151,31 @@ def parse_svara(token):
     return "".join(base).upper(), octave
 
 
+_DOT_ABOVE_MAP = {'S': 'Ṡ', 'R': 'Ṙ', 'G': 'Ġ', 'M': 'Ṁ', 'P': 'Ṗ', 'D': 'Ḋ', 'N': 'Ṅ'}
+_DOT_BELOW_MAP = {'S': 'Ṣ', 'R': 'Ṛ', 'M': 'Ṃ', 'D': 'Ḍ', 'N': 'Ṇ'}
+
+
+def to_display_svara(token):
+    """Return the display form of a svara token using precomposed Unicode characters.
+
+    Uses precomposed dot-above (Ṡ Ṙ Ġ Ṁ Ṗ Ḋ Ṅ) for upper octave and
+    dot-below (Ṣ Ṛ Ṃ Ḍ Ṇ) for lower octave. Falls back to combining
+    diacritics for the rare cases with no precomposed form (G↓, P↓).
+    Strips duration and grace-note markers before converting.
+    """
+    token = token.replace('*', '').rstrip('.;')
+    base, octave = parse_svara(token)
+    if octave == 0:
+        return base
+    if octave == 1:
+        return _DOT_ABOVE_MAP.get(base, base + _DOT_ABOVE)
+    if octave == -1:
+        return _DOT_BELOW_MAP.get(base, base + _DOT_BELOW)
+    if octave > 1:
+        return _DOT_ABOVE_MAP.get(base, base + _DOT_ABOVE) + _DOT_ABOVE * (octave - 1)
+    return _DOT_BELOW_MAP.get(base, base + _DOT_BELOW) + _DOT_BELOW * (-octave - 1)
+
+
 def to_lilypond(token, raga):
     """Translate one svara token (no duration suffix) to a LilyPond pitch."""
     base, octave = parse_svara(token)
