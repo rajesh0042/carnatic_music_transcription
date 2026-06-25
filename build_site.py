@@ -90,11 +90,27 @@ PAGE = """<!doctype html>
   const BASE_BPM = 80;
   const slider = document.getElementById('bpm-slider');
   const bpmVal = document.getElementById('bpm-val');
-  slider.addEventListener('input', () => {
-    const bpm = +slider.value;
+
+  function applyBpm(bpm) {
     bpmVal.textContent = bpm;
-    document.querySelectorAll('midi-player').forEach(p => { p.playbackRate = bpm / BASE_BPM; });
-  });
+    // Set directly on Tone.js transport (loaded by the CDN bundle) — affects live playback.
+    if (window.Tone?.Transport) {
+      Tone.Transport.bpm.value = bpm;
+    }
+    // Also set playbackRate on each player so the rate persists when a new song starts.
+    document.querySelectorAll('midi-player').forEach(p => {
+      p.playbackRate = bpm / BASE_BPM;
+    });
+  }
+
+  slider.addEventListener('input', () => applyBpm(+slider.value));
+
+  // Re-apply when any player starts, so the embedded MIDI tempo doesn't override the slider.
+  document.addEventListener('load', () => {
+    document.querySelectorAll('midi-player').forEach(p => {
+      p.addEventListener('start', () => applyBpm(+slider.value));
+    });
+  }, { once: true, capture: true });
 </script>
 <table>
 <thead><tr><th>Song</th><th>Raga</th><th>Tala</th><th>Listen</th><th></th></tr></thead>
