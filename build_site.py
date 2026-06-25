@@ -58,7 +58,7 @@ PAGE = """<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Carnatic Transcriptions</title>
-<script src="https://cdn.jsdelivr.net/npm/html-midi-player@1.5/dist/midi-player.js"></script>
+<script src="https://cdn.jsdelivr.net/combine/npm/tone@14,npm/@magenta/music@1.23.1/es6/core.js,npm/html-midi-player@1.5.0"></script>
 <style>
   :root { color-scheme: light dark; }
   body { font-family: -apple-system, system-ui, "Segoe UI", sans-serif;
