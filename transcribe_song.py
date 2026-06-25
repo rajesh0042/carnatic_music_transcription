@@ -136,6 +136,7 @@ def main(args):
 		timesignature = lookup_taalam(header['taalam'])
 		lines = file.readlines()
 
+	all_notes = []
 	with open(args[1], 'w') as outfile:
 		outfile.write(r"""
 \version "2.24.0"
@@ -157,6 +158,19 @@ def main(args):
 			if len(line) < 10:
 				continue
 			outfile.write(make_stanza(stripped.upper(), raag, timesignature))
+			all_notes.append(translate_units(tokenize(stripped.upper()), raag))
+
+		# Single MIDI score combining all stanzas in sequence (no visual layout).
+		if all_notes:
+			outfile.write("""
+\\score {
+  {
+    \\time %s
+    %s
+  }
+  \\midi { \\tempo 4 = 80 }
+}
+""" % (timesignature, '\n    '.join(all_notes)))
 
 
 if __name__ == "__main__":
