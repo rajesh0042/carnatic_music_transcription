@@ -73,11 +73,29 @@ PAGE = """<!doctype html>
   td.muted a { font-weight: 400; color: #888; }
   td.player { min-width: 220px; }
   midi-player { --player-button-size: 1.6em; display: block; }
+  .controls { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; }
+  .controls label { font-size: .9rem; color: #555; white-space: nowrap; }
+  .controls input[type=range] { width: 180px; }
+  .controls .bpm-val { font-weight: 600; min-width: 2.5em; display: inline-block; }
 </style>
 </head>
 <body>
 <h1>Carnatic Transcriptions</h1>
 <p class="sub">%%COUNT%% songs &middot; svara notation &rarr; Western sheet music</p>
+<div class="controls">
+  <label for="bpm-slider">Tempo: <span class="bpm-val" id="bpm-val">80</span> BPM</label>
+  <input type="range" id="bpm-slider" min="20" max="200" value="80" step="5">
+</div>
+<script>
+  const BASE_BPM = 80;
+  const slider = document.getElementById('bpm-slider');
+  const bpmVal = document.getElementById('bpm-val');
+  slider.addEventListener('input', () => {
+    const bpm = +slider.value;
+    bpmVal.textContent = bpm;
+    document.querySelectorAll('midi-player').forEach(p => { p.playbackRate = bpm / BASE_BPM; });
+  });
+</script>
 <table>
 <thead><tr><th>Song</th><th>Raga</th><th>Tala</th><th>Listen</th><th></th></tr></thead>
 <tbody>
