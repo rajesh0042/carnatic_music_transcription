@@ -87,25 +87,24 @@ PAGE = """<!doctype html>
   <input type="range" id="bpm-slider" min="20" max="200" value="80" step="5">
 </div>
 <script>
-  const BASE_BPM = 80;
   const slider = document.getElementById('bpm-slider');
   const bpmVal = document.getElementById('bpm-val');
 
   function applyBpm(bpm) {
     bpmVal.textContent = bpm;
-    // Set directly on Tone.js transport (loaded by the CDN bundle) — affects live playback.
     if (window.Tone?.Transport) {
       Tone.Transport.bpm.value = bpm;
     }
-    // Also set playbackRate on each player so the rate persists when a new song starts.
+    // Each player uses its own encoded tempo as the base so the slider sets
+    // an absolute BPM regardless of what tempo is baked into the MIDI file.
     document.querySelectorAll('midi-player').forEach(p => {
-      p.playbackRate = bpm / BASE_BPM;
+      const baseBpm = +(p.dataset.baseBpm || 80);
+      p.playbackRate = bpm / baseBpm;
     });
   }
 
   slider.addEventListener('input', () => applyBpm(+slider.value));
 
-  // Re-apply when any player starts, so the embedded MIDI tempo doesn't override the slider.
   document.addEventListener('load', () => {
     document.querySelectorAll('midi-player').forEach(p => {
       p.addEventListener('start', () => applyBpm(+slider.value));
@@ -124,7 +123,7 @@ PAGE = """<!doctype html>
 
 ROW = ('<tr><td><a href="pdfs/{stem}.pdf">{title}</a></td>'
        '<td>{raga}</td><td>{tala}</td>'
-       '<td class="player"><midi-player src="midi/{stem}.midi" sound-font></midi-player></td>'
+       '<td class="player"><midi-player src="midi/{stem}.midi" sound-font data-base-bpm="{tempo}"></midi-player></td>'
        '<td class="muted"><a href="pdfs/{stem}.pdf">PDF &rarr;</a></td></tr>')
 
 
@@ -146,6 +145,7 @@ def main():
 			title=html.escape(title),
 			raga=html.escape(pretty(header.get("ragam", ""))),
 			tala=html.escape(pretty(header.get("taalam", ""))),
+			tempo=header.get("tempo", 80),
 		)))
 	rows.sort(key=lambda r: r[0].lower())
 	page = (PAGE
