@@ -73,6 +73,9 @@ Each song is a plain `.txt` file with two parts:
 | `title`  | Display title on the score               | Any string                                          |
 | `ragam`  | Raga (scale) — maps svaras to pitches    | `mohanam`, `malahari`, `sankarabharanam` (case-insensitive) |
 | `taalam` | Tala (time signature)                    | `adi`, `rupakam`, `eka_thisra` (case-insensitive)   |
+| `tempo`  | MIDI playback speed in BPM (optional)    | Any integer; default `80`                           |
+| `lehra`  | Include a repeating lehra melody in MIDI | `true` / `false` (default `false`)                  |
+| `tabla`  | Include a tabla percussion track in MIDI | `true` / `false` (default `false`)                  |
 
 ### 2. Body — svara notation
 
@@ -116,14 +119,18 @@ suffix goes before the duration suffix: `s'.;` = whole-note upper Sa.
 
 Duration is indicated by a suffix on the note:
 
-| Suffix | Duration      | Beats (in 4/4) | LilyPond |
-|--------|---------------|----------------|----------|
-| none   | Quarter note  | 1 beat         | `c4`     |
-| `.`    | Half note     | 2 beats        | `c2`     |
-| `..`   | Dotted half   | 3 beats        | `c2~ c4` |
-| `.;`   | Whole note    | 4 beats        | `c1`     |
+| Suffix  | Duration           | Beats (in 4/4) | LilyPond          |
+|---------|--------------------|----------------|-------------------|
+| none    | Quarter note       | 1 beat         | `c4`              |
+| `.`     | Half note          | 2 beats        | `c2`              |
+| `..`    | Dotted half        | 3 beats        | `c2~ c4`          |
+| `.;`    | Whole note         | 4 beats        | `c1`              |
+| `.;;`   | Two wholes (tied)  | 8 beats        | `c1~ c1`          |
+| `.;;;`  | Three wholes (tied)| 12 beats       | `c1~ c1~ c1`      |
 
-Examples: `S` = quarter Sa, `S.` = half Sa, `S..` = dotted half Sa, `S.;` = whole Sa.
+Each additional `;` adds another whole note (4 beats) as a tie. You can stack as many as needed.
+
+Examples: `S` = quarter Sa, `S.` = half Sa, `S..` = dotted half Sa, `S.;` = whole Sa, `S.;;;` = Sa held for 12 beats.
 
 A duration mark may also stand on its own to **extend the previous svara**, the
 way a Carnatic `,`/`;` lengthens a note: `S .` means the same as `S.`, and
@@ -162,6 +169,19 @@ d. p* m.
 ```
 
 is "Dha (held), just touch Pa, Ma (held)" — `a'2 \acciaccatura g'8 f'2`.
+
+#### Staccato
+
+Append `!` to a svara to mark it **staccato** — played short and detached. It
+renders as a LilyPond `\staccato` articulation (dot above the note) and does not
+affect the written duration or the lyric syllable:
+
+```
+p! p! p! d n p
+```
+
+Staccato composes with duration and octave suffixes: `P!.` = staccato half-Pa,
+`S'!` = staccato upper-Sa.
 
 #### Section labels
 
@@ -262,14 +282,30 @@ Notes and limits:
 
 ## Included Songs
 
-| File                      | Raga            | Taala       |
-|---------------------------|-----------------|-------------|
-| `vande_meenakshi.txt`     | Sankarabharanam | Adi         |
-| `kamalasana.txt`          | Sankarabharanam | Adi         |
-| `syamale_meenakshi.txt`   | Sankarabharanam | Adi         |
-| `rama_janardhana.txt`     | Sankarabharanam | Eka Thisra  |
-| `vara_veena.txt`          | Mohanam         | Rupakam     |
-| `sri_gananadam.txt`       | Malahari        | Rupakam     |
+| File                        | Raga            | Taala      |
+|-----------------------------|-----------------|------------|
+| `vande_meenakshi.txt`       | Sankarabharanam | Adi        |
+| `kamalasana.txt`            | Sankarabharanam | Adi        |
+| `syamale_meenakshi.txt`     | Sankarabharanam | Adi        |
+| `rama_janardhana.txt`       | Sankarabharanam | Eka Thisra |
+| `vara_veena.txt`            | Mohanam         | Rupakam    |
+| `sri_gananadam.txt`         | Malahari        | Rupakam    |
+| `raminchuvarevarura.txt`    | Suposhini       | Rupakam    |
+| `sara_sara_samaraika.txt`   | Kuntalavarali   | Adi        |
+
+## MIDI
+
+Every song generates a `.midi` file alongside the PDF. By default it contains only the main melody. Two optional accompaniment tracks can be enabled per song in the header:
+
+- **Lehra** (`"lehra": true`) — a repeating melodic cycle in the raga, played on violin, covering the full song duration. One-cycle patterns are defined for all bundled ragas; unknown ragas use the ascending arohana as a fallback.
+
+- **Tabla** (`"tabla": true`) — a percussion track on General MIDI channel 10 (bongos approximate dayan/bayan). Theka patterns are defined for all supported taalas.
+
+Example header enabling both:
+
+```json
+{"title": "My Song", "ragam": "Mohanam", "taalam": "rupakam", "tempo": 120, "lehra": true, "tabla": true}
+```
 
 ## Adding a New Song
 

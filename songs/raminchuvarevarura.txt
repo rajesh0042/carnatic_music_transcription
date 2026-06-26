@@ -1,4 +1,4 @@
-{"title": "Raminchuvarevarura", "taalam": "roopakam", "ragam": "Suposhini"}
+{"title": "Raminchuvarevarura", "taalam": "roopakam", "ragam": "Suposhini", "tempo": 250}
 
 {Pallavi}
 S R. S M. P D N P.. S' D. N P. M M R M..
@@ -10,21 +10,26 @@ S R S M R M P D N P.. S' D. N P. M M R M..
 S R S M R M P D N M P D S' D. N P. M M R M..
 S R S M R M P D N M P D S' D. N P. M M R M..
 
-S.; S.; S.;
+S R. S M. P D N P.. S'.;S'.;;
 
 {Anu Pallavi}
-M N. D S'. R' R' S' S'.. M M S' D N P M M R M..
-M N. D S'. R' R' S' S'.. M M S' D N P M M R M..
+M N. D S'. R' R' S' S'.. M' M' S' D N P M M R M..
+M N. D S'. R' R' S' S'.. M' M' S' D N P M M R M..
 
 S R S M R M P D N M P D S' D. N P. M M R M..
 
-S.; S.; S.;
+S R. S M. P D N P.. S'.;S'.;; 
+
 
 {Charanam}
-P P P D N P M M M R.. S M M R M. P D N P P P 
-P D N S' S' S' R' R' R' R' S' S' M' M' S' D N P  M M R M.
+P! P! P! D N P M M M R.. S M M R M. P D N P! P! P! 
+P D N S' S' S' R' R' R' R' S' S'. M' M' S' D N P  M M R M.
+
+P! P! P! D N P M M M R.. S M M R M. P D N P! P! P! 
+P D N S' S' S' R' R' R' R' S' S'. M' M' S' D N P  M M R M.
 
 
 S R S M R M P D N M P D S' D. N P. M M R M..
 
-S.; S.; S.;
+
+S R. S M. P D N P.. S'.;S'.;;

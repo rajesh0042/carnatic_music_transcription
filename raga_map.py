@@ -94,6 +94,79 @@ def variants_to_map(variants):
 RAGA_MAP = {name: variants_to_map(v) for name, v in RAGA_DEFINITIONS.items()}
 
 
+# One repeating-cycle lehra pattern per (raga, taala), in svara notation.
+# Beat totals: Adi = 8 (2 bars of 4/4), Rupakam = 6 (1 bar of 6/4),
+# Eka Thisra = 3 (1 bar of 3/4).  Janya ragas with missing svaras need
+# custom patterns; full-7-svara ragas use the "_default" fallback.
+LEHRA_PATTERNS = {
+    # --- Janya: pentatonic (5 svaras + Sa) ------------------------------------
+    ("mohanam",     "adi"):         "s. g. p. d.",      # S R G P D — no M N  [2+2+2+2=8]
+    ("mohanam",     "rupakam"):     "s r g p d s'",      # [6]
+    ("mohanam",     "eka_thisra"):  "s g p",             # [3]
+    ("hamsadhwani", "adi"):         "s. g. p. n.",       # S R G P N — no M D  [8]
+    ("hamsadhwani", "rupakam"):     "s r g p n s'",      # [6]
+    ("hindolam",    "adi"):         "s. g. m. d.",       # S G M D N — no R P  [8]
+    ("hindolam",    "rupakam"):     "s g m d n s'",      # [6]
+    ("abhogi",      "adi"):         "s. r. g. m.",       # S R G M D — no P N  [8]
+    ("abhogi",      "rupakam"):     "s r g m d s'",      # [6]
+    ("kuntalavarali","adi"):        "s. m. p. d.",       # S M P D N — no R G  [8]
+    ("kuntalavarali","rupakam"):    "s m p d n s'",      # [6]
+    # --- Janya: hexatonic (6 svaras + Sa) -------------------------------------
+    ("malahari",    "adi"):         "s r m p d. r.",     # S R G M P D — no N  [1+1+1+1+2+2=8]
+    ("malahari",    "rupakam"):     "s r m p d s'",      # [6]
+    ("malahari",    "eka_thisra"):  "s r m",             # [3]
+    ("sriranjani",  "adi"):         "s. r. g. m.",       # S R G M D N — no P  [8]
+    ("sriranjani",  "rupakam"):     "s r g m d n",       # [6]
+    ("suposhini",   "adi"):         "s r m p d. r.",     # S R M P D N — no G  [8]
+    ("suposhini",   "rupakam"):     "s r m p d n",       # [6]
+    # --- Default: full 7-svara ragas (all melakarta; most Wikipedia ragas) ----
+    ("_default",    "adi"):         "s r g m p d n s'",  # [8]
+    ("_default",    "rupakam"):     "s r g m p d",       # [6]
+    ("_default",    "eka_thisra"):  "s r g",             # [3]
+}
+
+
+# Tabla theka patterns per taala, in LilyPond \drummode notation.
+# boh = High Bongo / dayan, bol = Low Bongo / bayan, <bol boh> = Dha (both together).
+TABLA_PATTERNS = {
+    "adi":          "<bol boh>4 boh4 boh4 bol4",                              # 4 beats
+    "rupakam":      "<bol boh>4 boh4 boh4 boh4 bol4 boh4",                   # 6 beats
+    "roopakam":     "<bol boh>4 boh4 boh4 boh4 bol4 boh4",
+    "eka_thisra":   "<bol boh>4 boh4 bol4",                                   # 3 beats
+    "eka_tisra":    "<bol boh>4 boh4 bol4",
+    "misra_chapu":  "<bol boh>8 boh8 boh8 <bol boh>8 boh8 <bol boh>8 boh8",  # 7 eighths
+    "khanda_chapu": "<bol boh>8 boh8 <bol boh>8 boh8 boh8",                   # 5 eighths
+}
+
+# Quarter-note beats per tabla cycle
+_TABLA_BEATS = {
+    "adi": 4, "rupakam": 6, "roopakam": 6,
+    "eka_thisra": 3, "eka_tisra": 3,
+    "misra_chapu": 3.5, "khanda_chapu": 2.5,
+}
+
+
+def get_tabla_pattern(taala_name):
+    """Return (drummode_pattern, cycle_beats) or (None, None) if unsupported."""
+    key = taala_name.strip().lower()
+    pat = TABLA_PATTERNS.get(key)
+    beats = _TABLA_BEATS.get(key)
+    return (pat, beats) if (pat and beats) else (None, None)
+
+
+_TAALA_ALIASES = {"roopakam": "rupakam", "eka_tisra": "eka_thisra"}
+
+
+def get_lehra_pattern(raga_name, taala_name):
+    """Return the lehra svara string for a (raga, taala) pair, or None if unsupported."""
+    raga_key = raga_name.strip().lower()
+    taala_key = _TAALA_ALIASES.get(taala_name.strip().lower(), taala_name.strip().lower())
+    pat = LEHRA_PATTERNS.get((raga_key, taala_key))
+    if pat is not None:
+        return pat
+    return LEHRA_PATTERNS.get(("_default", taala_key))  # None for compound meters
+
+
 def get_raga(name):
     """Resolve a raga name to its {base svara -> semitone} map.
 
@@ -163,7 +236,7 @@ def to_display_svara(token):
     diacritics for the rare cases with no precomposed form (G↓, P↓).
     Strips duration and grace-note markers before converting.
     """
-    token = token.replace('*', '').rstrip('.;')
+    token = token.replace('*', '').replace('!', '').rstrip('.;')
     base, octave = parse_svara(token)
     if octave == 0:
         return base
