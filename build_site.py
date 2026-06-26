@@ -62,21 +62,24 @@ PAGE = """<!doctype html>
 <style>
   :root { color-scheme: light dark; }
   body { font-family: -apple-system, system-ui, "Segoe UI", sans-serif;
-         max-width: 900px; margin: 2.5rem auto; padding: 0 1rem; line-height: 1.5; }
-  h1 { margin-bottom: .25rem; }
-  p.sub { color: #888; margin-top: 0; }
+         max-width: 900px; margin: 2.5rem auto; padding: 0 1.5rem; line-height: 1.5; }
+  h1 { margin-bottom: .2rem; font-size: 1.8rem; }
+  p.sub { color: #888; margin-top: 0; font-size: .9rem; }
   table { border-collapse: collapse; width: 100%; margin-top: 1.5rem; }
-  th, td { text-align: left; padding: .6rem .8rem; border-bottom: 1px solid #8884; vertical-align: middle; }
-  th { font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: #888; }
+  th, td { text-align: left; padding: .55rem .75rem; border-bottom: 1px solid #8883; vertical-align: middle; }
+  th { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: #999; }
   td a { text-decoration: none; font-weight: 600; }
   td a:hover { text-decoration: underline; }
   td.muted a { font-weight: 400; color: #888; }
-  td.player { min-width: 220px; }
-  midi-player { --player-button-size: 1.6em; display: block; }
-  .controls { display: flex; align-items: center; gap: 1rem; margin-top: 1.25rem; }
-  .controls label { font-size: .9rem; color: #555; white-space: nowrap; }
-  .controls input[type=range] { width: 180px; }
-  .controls .bpm-val { font-weight: 600; min-width: 2.5em; display: inline-block; }
+  td.player { width: 200px; padding: 4px 6px; }
+  midi-player { --player-button-size: 1.4em; display: block; border-radius: 999px; }
+  @media (prefers-color-scheme: dark) {
+    midi-player { filter: invert(1) hue-rotate(180deg); }
+  }
+  .controls { display: flex; align-items: center; gap: .75rem; margin-top: 1rem; }
+  .controls label { font-size: .85rem; color: #777; white-space: nowrap; }
+  .controls input[type=range] { width: 160px; accent-color: #7c7; }
+  .controls .bpm-val { font-weight: 700; min-width: 2.2em; display: inline-block; }
 </style>
 </head>
 <body>
@@ -84,7 +87,7 @@ PAGE = """<!doctype html>
 <p class="sub">%%COUNT%% songs &middot; svara notation &rarr; Western sheet music</p>
 <div class="controls">
   <label for="bpm-slider">Tempo: <span class="bpm-val" id="bpm-val">80</span> BPM</label>
-  <input type="range" id="bpm-slider" min="20" max="200" value="80" step="5">
+  <input type="range" id="bpm-slider" min="20" max="300" value="80" step="5">
 </div>
 <script>
   const slider = document.getElementById('bpm-slider');
