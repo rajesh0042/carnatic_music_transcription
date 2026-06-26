@@ -60,74 +60,166 @@ PAGE = """<!doctype html>
 <title>Carnatic Transcriptions</title>
 <script src="https://cdn.jsdelivr.net/combine/npm/tone@14,npm/@magenta/music@1.23.1/es6/core.js,npm/html-midi-player@1.5.0"></script>
 <style>
-  :root { color-scheme: light dark; }
-  body { font-family: -apple-system, system-ui, "Segoe UI", sans-serif;
-         max-width: 900px; margin: 2.5rem auto; padding: 0 1.5rem; line-height: 1.5; }
-  h1 { margin-bottom: .2rem; font-size: 1.8rem; }
-  p.sub { color: #888; margin-top: 0; font-size: .9rem; }
-  table { border-collapse: collapse; width: 100%; margin-top: 1.5rem; }
-  th, td { text-align: left; padding: .55rem .75rem; border-bottom: 1px solid #8883; vertical-align: middle; }
-  th { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: #999; }
-  td a { text-decoration: none; font-weight: 600; }
-  td a:hover { text-decoration: underline; }
-  td.muted a { font-weight: 400; color: #888; }
-  td.player { width: 200px; padding: 4px 6px; }
-  midi-player { --player-button-size: 1.4em; display: block; border-radius: 999px; }
-  @media (prefers-color-scheme: dark) {
-    midi-player { filter: invert(1) hue-rotate(180deg); }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:     #f2f2f7;
+    --card:   #ffffff;
+    --border: #d1d1d6;
+    --text:   #1c1c1e;
+    --muted:  #6c6c70;
+    --accent: #5856d6;
   }
-  .controls { display: flex; align-items: center; gap: .75rem; margin-top: 1rem; }
-  .controls label { font-size: .85rem; color: #777; white-space: nowrap; }
-  .controls input[type=range] { width: 160px; accent-color: #7c7; }
-  .controls .bpm-val { font-weight: 700; min-width: 2.2em; display: inline-block; }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:     #000000;
+      --card:   #1c1c1e;
+      --border: #38383a;
+      --text:   #f2f2f7;
+      --muted:  #8e8e93;
+      --accent: #7d7aff;
+    }
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, system-ui, "Segoe UI", Helvetica, sans-serif;
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 1.25rem 5rem;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1 {
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: -.025em;
+    margin-bottom: .2rem;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: .85rem;
+    margin-bottom: 1.5rem;
+  }
+  .controls {
+    display: inline-flex;
+    align-items: center;
+    gap: .5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: .35rem .9rem;
+    font-size: .82rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .bpm-val {
+    font-weight: 700;
+    color: var(--text);
+    min-width: 1.8rem;
+    display: inline-block;
+  }
+  input[type=range] {
+    width: 110px;
+    accent-color: var(--accent);
+    cursor: pointer;
+  }
+  .songs { display: flex; flex-direction: column; gap: .55rem; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: .9rem 1rem .75rem;
+  }
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .75rem;
+    margin-bottom: .55rem;
+  }
+  .song-name {
+    font-size: .95rem;
+    font-weight: 600;
+    letter-spacing: -.01em;
+  }
+  .song-name a { color: var(--text); text-decoration: none; }
+  .song-name a:hover { color: var(--accent); }
+  .song-detail {
+    color: var(--muted);
+    font-size: .78rem;
+    margin-top: .15rem;
+  }
+  .pdf-btn {
+    flex-shrink: 0;
+    font-size: .73rem;
+    color: var(--muted);
+    text-decoration: none;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: .2rem .5rem;
+    white-space: nowrap;
+    line-height: 1.6;
+  }
+  .pdf-btn:hover { color: var(--text); border-color: var(--muted); }
+  /* Player always sits on white so it looks consistent in both light and dark modes */
+  .player-wrap {
+    background: #ffffff;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  midi-player {
+    --player-button-size: 1.25em;
+    display: block;
+  }
 </style>
 </head>
 <body>
 <h1>Carnatic Transcriptions</h1>
-<p class="sub">%%COUNT%% songs &middot; svara notation &rarr; Western sheet music</p>
+<p class="sub">%%COUNT%% songs &middot; svara notation &rarr; sheet music</p>
 <div class="controls">
-  <label for="bpm-slider">Tempo: <span class="bpm-val" id="bpm-val">80</span> BPM</label>
+  Tempo&thinsp;
   <input type="range" id="bpm-slider" min="20" max="300" value="80" step="5">
+  <span class="bpm-val" id="bpm-val">80</span>&thinsp;BPM
 </div>
 <script>
   const slider = document.getElementById('bpm-slider');
   const bpmVal = document.getElementById('bpm-val');
-
   function applyBpm(bpm) {
     bpmVal.textContent = bpm;
-    if (window.Tone?.Transport) {
-      Tone.Transport.bpm.value = bpm;
-    }
-    // Each player uses its own encoded tempo as the base so the slider sets
-    // an absolute BPM regardless of what tempo is baked into the MIDI file.
+    if (window.Tone?.Transport) Tone.Transport.bpm.value = bpm;
     document.querySelectorAll('midi-player').forEach(p => {
-      const baseBpm = +(p.dataset.baseBpm || 80);
-      p.playbackRate = bpm / baseBpm;
+      p.playbackRate = bpm / +(p.dataset.baseBpm || 80);
     });
   }
-
   slider.addEventListener('input', () => applyBpm(+slider.value));
-
   document.addEventListener('load', () => {
-    document.querySelectorAll('midi-player').forEach(p => {
-      p.addEventListener('start', () => applyBpm(+slider.value));
-    });
+    document.querySelectorAll('midi-player').forEach(p =>
+      p.addEventListener('start', () => applyBpm(+slider.value))
+    );
   }, { once: true, capture: true });
 </script>
-<table>
-<thead><tr><th>Song</th><th>Raga</th><th>Tala</th><th>Listen</th><th></th></tr></thead>
-<tbody>
+<div class="songs">
 %%ROWS%%
-</tbody>
-</table>
+</div>
 </body>
 </html>
 """
 
-ROW = ('<tr><td><a href="pdfs/{stem}.pdf">{title}</a></td>'
-       '<td>{raga}</td><td>{tala}</td>'
-       '<td class="player"><midi-player src="midi/{stem}.midi" sound-font data-base-bpm="{tempo}"></midi-player></td>'
-       '<td class="muted"><a href="pdfs/{stem}.pdf">PDF &rarr;</a></td></tr>')
+ROW = (
+    '<div class="card">'
+      '<div class="card-top">'
+        '<div>'
+          '<div class="song-name"><a href="pdfs/{stem}.pdf">{title}</a></div>'
+          '<div class="song-detail">{raga} &middot; {tala}</div>'
+        '</div>'
+        '<a class="pdf-btn" href="pdfs/{stem}.pdf">PDF&nbsp;&#8599;</a>'
+      '</div>'
+      '<div class="player-wrap">'
+        '<midi-player src="midi/{stem}.midi" sound-font data-base-bpm="{tempo}"></midi-player>'
+      '</div>'
+    '</div>'
+)
 
 
 def main():
